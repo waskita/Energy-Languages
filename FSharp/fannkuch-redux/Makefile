@@ -1,5 +1,5 @@
 compile:
-	cp fannkuchredux.fsharpcore-3.fsharpcore Program.fs
+	cp fannkuchredux.fsharpcore-6.fsharpcore Program.fs
 	/usr/bin/dotnet build -c Release
 
 measure:

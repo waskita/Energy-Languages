@@ -1,5 +1,5 @@
 compile:
-	cp binarytrees.fsharpcore-3.fsharpcore Program.fs
+	cp binarytrees.fsharpcore-7.fsharpcore Program.fs
 	/usr/bin/dotnet build -c Release
 
 measure:

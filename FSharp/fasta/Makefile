@@ -1,5 +1,5 @@
 compile:
-	cp fasta.fsharpcore Program.fs
+	cp fasta.fsharpcore-3.fsharpcore Program.fs
 	/usr/bin/dotnet build -c Release
 
 measure:

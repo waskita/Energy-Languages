@@ -1,5 +1,6 @@
 compile:	
 	cp pidigits.fsharpcore-3.fsharpcore Program.fs
+#	cp pidigits.fsharp-6.fsharp Program.fs
 	/usr/bin/dotnet build -c Release
 
 measure:
