@@ -5,7 +5,7 @@ measure:
 	sudo ../../RAPL/main "/usr/local/src/node-v7.9.0-linux-x64/bin/node binarytrees.js 21" JavaScript binary-trees
 
 run:
-	/usr/local/src/node-v7.9.0-linux-x64/bin/node binarytrees.js 21
+	node binarytrees.js 21
 
 mem:
 	/usr/bin/time -v /usr/local/src/node-v7.9.0-linux-x64/bin/node binarytrees.js 21
