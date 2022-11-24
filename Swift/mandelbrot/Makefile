@@ -1,5 +1,6 @@
 compile:
-	/usr/local/src/swift-2017-04-13-a-ubuntu16.10/usr/bin/swiftc mandelbrot.swift-3.swift -Ounchecked -whole-module-optimization  -o mandelbrot.swift-3.swift_run
+	swiftc -Ounchecked -whole-module-optimization  -o mandelbrot.swift-3.swift_run  mandelbrot.swift-3.swift
+
 
 measure:
 	sudo modprobe msr

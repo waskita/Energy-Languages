@@ -176,4 +176,4 @@ let _ = rows.withUnsafeMutableBufferPointer {
 
 iov[1].iov_len = rows.count
 writev(STDOUT_FILENO, iov, 2)
-iov.deallocate(capacity: 2)
+iov.deallocate()
