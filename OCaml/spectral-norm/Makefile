@@ -1,17 +1,18 @@
 compile:
-	cp spectralnorm.ocaml-3.ocaml spectralnorm.ocaml-3.ml
-	ocamlopt -noassert -unsafe -fPIC -nodynlink -inline 100 unix.cmxa bigarray.cmxa spectralnorm.ocaml-3.ml -o spectralnorm.ocaml-3.ocaml_run
-	rm spectralnorm.ocaml-3.ml
+	cp ../../benchmarksgame-sourcecode/spectralnorm/spectralnorm.ocaml-2.ocaml spectralnorm.ml
+#	cp spectralnorm.ocaml-3.ocaml spectralnorm.ocaml-3.ml
+#	ocamlopt -noassert -unsafe -fPIC -nodynlink -inline 100 unix.cmxa bigarray.cmxa spectralnorm.ocaml-3.ml -o spectralnorm.ocaml-3.ocaml_run
+	ocamlopt -noassert -unsafe -fPIC -nodynlink -inline 100 unix.cmxa bigarray.cmxa spectralnorm.ml -o spectralnorm
 
 measure:
 	sudo modprobe msr
-	sudo ../../RAPL/main "./spectralnorm.ocaml-3.ocaml_run 5500" OCaml spectral-norm
+	sudo ../../RAPL/main "./spectralnorm 5500" OCaml spectral-norm
 
 run:
-	./spectralnorm.ocaml-3.ocaml_run 5500
+	./spectralnorm 5500
 
 mem:
-	/usr/bin/time -v ./spectralnorm.ocaml-3.ocaml_run 5500
+	/usr/bin/time -v ./spectralnorm 5500
 
 valgrind:
-	valgrind --tool=massif --stacks=yes ./spectralnorm.ocaml-3.ocaml_run 5500
+	valgrind --tool=massif --stacks=yes ./spectralnorm 5500

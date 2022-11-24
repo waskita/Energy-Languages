@@ -1,16 +1,17 @@
 compile:
-	cp fasta.ocaml-6.ocaml fasta.ocaml-6.ml
-	ocamlopt -noassert -unsafe -fPIC -nodynlink -inline 100 unix.cmxa fasta.ocaml-6.ml -o fasta.ocaml-6.ocaml_run
+	cp ../../benchmarksgame-sourcecode/fasta/fasta.ocaml-3.ocaml fasta.ml
+	cp ../../benchmarksgame-sourcecode/fasta/fasta.ocaml-6.ocaml fasta.ml
+	ocamlopt -noassert -unsafe -fPIC -nodynlink -inline 100 unix.cmxa fasta.ml -o fasta
 
 measure:
 	sudo modprobe msr
-	sudo ../../RAPL/main "./fasta.ocaml-6.ocaml_run 25000000" OCaml fasta
+	sudo ../../RAPL/main "./fasta 25000000" OCaml fasta
 
 run:
-	./fasta.ocaml-6.ocaml_run 25000000
+	./fasta 25000000
 
 mem:
-	/usr/bin/time -v  ./fasta.ocaml-6.ocaml_run 25000000
+	/usr/bin/time -v  ./fasta 25000000
 
 valgrind:
-	valgrind --tool=massif --stacks=yes  ./fasta.ocaml-6.ocaml_run 25000000
+	valgrind --tool=massif --stacks=yes  ./fasta 25000000

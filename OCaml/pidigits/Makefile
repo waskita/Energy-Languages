@@ -1,17 +1,18 @@
 compile:
-	cp pidigits.ocaml-3.ocaml pidigits.ocaml-3.ml
-	ocamlopt -noassert -unsafe -fPIC -nodynlink -inline 100 -I /usr/local/lib/ocaml/gmp gmp.cmxa pidigits.ocaml-3.ml -o pidigits.ocaml-3.ocaml_run
-	rm pidigits.ocaml-3.ml
+	cp ../../benchmarksgame-sourcecode/pidigits/pidigits.ocaml-5.ocaml pidigits.ml
+	cp ../../benchmarksgame-sourcecode/pidigits/pidigits.ocaml-7.ocaml pidigits.ml
+
+	ocamlopt -noassert -unsafe -fPIC -nodynlink -inline 100 -I /usr/local/lib/ocaml/gmp gmp.cmxa pidigits.ml -o pidigits
 	
 xmeasure:
 	sudo modprobe msr
-	sudo ../../RAPL/main "./pidigits.ocaml-3.ocaml_run 2000" OCaml pidigits
+	sudo ../../RAPL/main "./pidigits 2000" OCaml pidigits
 
 run:
-	./pidigits.ocaml-3.ocaml_run 2000
+	./pidigits 2000
 
 mem:
-	/usr/bin/time -v ../pidigits.ocaml-3.ocaml_run 2000
+	/usr/bin/time -v ../pidigits 2000
 
 valgrind:
-	valgrind --tool=massif --stacks=yes ./pidigits.ocaml-3.ocaml_run 2000
+	valgrind --tool=massif --stacks=yes ./pidigits 2000
