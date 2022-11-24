@@ -1,0 +1,89 @@
+/*
+   The Computer Language Benchmarks Game
+   https://salsa.debian.org/benchmarksgame-team/benchmarksgame/
+
+   Based on Java regex-dna program (#5) contributed by Michael Stover
+
+   Contributed by Hank Grabowski
+ */
+
+import java.io.BufferedReader
+import java.io.IOException
+import java.io.InputStreamReader
+import java.util.HashMap
+import java.util.regex.Pattern
+
+object regexredux {
+
+    private val replacements = HashMap<String, String>()
+
+    init {
+        replacements.put("tHa[Nt]", "<4>")
+        replacements.put("aND|caN|Ha[DS]|WaS", "<3>")
+        replacements.put("a[NSt]|BY", "<2>")
+        replacements.put("<[^>]*>", "|")
+        replacements.put("\\|[^|][^|]*\\|", "-")
+    }
+
+    @Throws(IOException::class)
+    @JvmStatic
+    fun main(args: Array<String>) {
+        val r = BufferedReader(InputStreamReader(System.`in`,
+                "US-ASCII"))
+        val sb = StringBuffer()
+        var line: String? = null
+        while ({line = r?.readLine()?:null; line}() != null) {
+            sb.append(line)
+            sb.append("\n")
+        }
+
+        val initialLength = sb.length
+
+        val sequence = sb.toString().replace(">.*\n|\n".toRegex(), "")
+
+        val codeLength = sequence.length
+
+        val variants = arrayOf("agggtaaa|tttaccct", "[cgt]gggtaaa|tttaccc[acg]", "a[act]ggtaaa|tttacc[agt]t", "ag[act]gtaaa|tttac[agt]ct", "agg[act]taaa|ttta[agt]cct", "aggg[acg]aaa|ttt[cgt]ccct", "agggt[cgt]aa|tt[acg]accct", "agggta[cgt]a|t[acg]taccct", "agggtaa[cgt]|[acg]ttaccct")
+
+        val results = HashMap<String, Int>()
+        val tg = ThreadGroup("regexWork")
+        for (v in variants) {
+            object : Thread(tg, v) {
+                override fun run() {
+                    var count = 0
+                    val m = Pattern.compile(v).matcher(sequence)
+                    while (m.find()) {
+                        count++
+                    }
+                    results.put(v, count)
+                }
+            }.start()
+        }
+        val threads = arrayOfNulls<Thread>(variants.size)
+        tg.enumerate(threads)
+        for (t in threads) {
+            try {
+                t?.join()
+            } catch (e: InterruptedException) {
+                // noop
+            }
+
+        }
+        tg.destroy()
+        for (variant in variants) {
+            println(variant + " " + results[variant])
+        }
+        val buf = StringBuffer()
+        val m = Pattern.compile("[WYKMSRBDVHN]").matcher(sequence)
+        while (m.find()) {
+            m.appendReplacement(buf, "")
+            buf.append(replacements[m.group()])
+        }
+        m.appendTail(buf)
+
+        println()
+        println(initialLength)
+        println(codeLength)
+        println(buf.length)
+    }
+}
