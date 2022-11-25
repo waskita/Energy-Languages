@@ -1,5 +1,7 @@
 compile:
 	ifort -O3 -fast -qopenmp knucleotide.f90 -o knucleotide.ifc_run
+compile2:
+	gfortran -O3 -Ofast -fopenmp knucleotide.f90 -o knucleotide.ifc_run
 measure:
 	sudo modprobe msr
 	sudo ../../RAPL/main "./knucleotide.ifc_run 0 < ../../knucleotide-input25000000.txt" Fortran k-nucleotide

@@ -1,5 +1,7 @@
 compile:
 	ifort -O3 -xHost -qopenmp -static-intel -ip -lapr-1 binarytrees.ifc-2.f90 -o binarytrees.ifc-2.ifc_run
+compile2:
+	gfortran  -O3 -fopenmp -lapr-1 binarytrees.ifc-2.f90 -o binarytrees.ifc-2.ifc_run
 
 measure:
 	sudo modprobe msr

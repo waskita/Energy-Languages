@@ -1,5 +1,8 @@
 compile:
 	ifort -O3 -fast -qopt-streaming-stores always fasta.ifc-4.f90 -o fasta.ifc-4.ifc_run
+compile2:
+	gfortran -O3 -Ofast fasta.ifc-4.f90 -o fasta.ifc-4.ifc_run
+
 measure:
 	sudo modprobe msr
 	sudo ../../RAPL/main "./fasta.ifc-4.ifc_run 25000000" Fortran fasta
