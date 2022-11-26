@@ -5,7 +5,7 @@ measure:
 	sudo ../../RAPL/main "/usr/bin/dart  mandelbrot-3.dart 16000" Dart mandelbrot
 
 run:
-	/usr/bin/dart  mandelbrot-3.dart 16000
+	dart  mandelbrot-3.dart 16000
 
 mem:
 	/usr/bin/time -v /usr/bin/dart  mandelbrot-3.dart 16000

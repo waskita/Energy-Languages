@@ -5,7 +5,7 @@ measure:
 	sudo ../../RAPL/main "/usr/bin/dart  knucleotide.dart-3.dart 0 < ../../knucleotide-input25000000.txt" Dart k-nucleotide
 
 run:
-	/usr/bin/dart  knucleotide.dart-3.dart 0 < ../../knucleotide-input25000000.txt
+	dart  knucleotide.dart-3.dart 0 < ../../knucleotide-input25000000.txt
 
 mem:
 	/usr/bin/time -v  /usr/bin/dart  knucleotide.dart-3.dart 0 < ../../knucleotide-input25000000.txt

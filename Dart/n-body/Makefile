@@ -5,7 +5,7 @@ measure:
 	sudo ../../RAPL/main "/usr/bin/dart  nbody.dart-6.dart 50000000" Dart n-body
 
 run:
-	/usr/bin/dart  nbody.dart-6.dart 50000000
+	dart  nbody.dart-6.dart 50000000
 
 mem:
 	/usr/bin/time -v /usr/bin/dart  nbody.dart-6.dart 50000000
