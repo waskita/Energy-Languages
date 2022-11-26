@@ -3,6 +3,11 @@ compile:
 	fpc -FuInclude/fpascal -XXs -O4 -Tlinux -oFPASCAL_RUN pidigits.fpascal-3.pas
 	mv FPASCAL_RUN pidigits.fpascal-3.fpascal_run
 	rm pidigits.fpascal-3.pas
+compile2:
+	cp pidigits.fpascal-3.fpascal pidigits.fpascal-3.pas
+	fpc -FuInclude/fpascal -XXs -O4 -Tlinux -oFPASCAL_RUN pidigits.fpascal-3.pas
+	mv FPASCAL_RUN pidigits.fpascal-3.fpascal_run
+	rm pidigits.fpascal-3.pas
 measure:
 	sudo modprobe msr
 	sudo ../../RAPL/main "./pidigits.fpascal-3.fpascal_run 10000" Pascal pidigits
