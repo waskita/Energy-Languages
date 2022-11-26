@@ -1,13 +1,22 @@
-compile:
+compile: tmp.csproj
 	cp fasta.csharpcore Program.cs
-	/usr/bin/dotnet build -c Release
+	dotnet build -c Release
+
+compile2: tmp.csproj
+	cp fasta.csharpcore Program.cs
+	dotnet build -c Release
+
+tmp.csproj:
+	touch Program.fs
+	rm Program.fs
+	dotnet new console -o . -n tmp -lang C#
 
 measure:
 	sudo modprobe msr
 	sudo ../../RAPL/main "/usr/bin/dotnet ./bin/Release/netcoreapp1.1/tmp.dll 25000000" CSharp fasta
 
 run:
-	/usr/bin/dotnet ./bin/Release/netcoreapp1.1/tmp.dll 25000000
+	dotnet bin/Release/net6.0/tmp.dll 25000000
 
 mem:
 	/usr/bin/time -v  /usr/bin/dotnet ./bin/Release/netcoreapp1.1/tmp.dll 25000000
