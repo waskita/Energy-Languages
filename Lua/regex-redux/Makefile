@@ -5,8 +5,7 @@ xmeasure:
 	sudo ../../RAPL/main "lua  regexredux.lua-2.lua 0 < ../../regexredux-input50000.txt" Lua regex-redux
 
 run:
-	lua  regexredux.lua-2.lua 0 < ../../regexredux-input50000.txt
-
+	lua  regexredux.lua-2.lua 0 < ../../regexredux-input5000000.txt
 mem:
 	/usr/bin/time -v lua  regexredux.lua-2.lua 0 < ../../regexredux-input50000.txt
 
