@@ -5,7 +5,7 @@ measure:
 	sudo ../../RAPL/main "node spectralnorm.node-2.js 5500" JavaScript spectral-norm
 
 run:
-	/node spectralnorm.node-2.js 5500
+	node spectralnorm.node-2.js 5500
 
 mem:
 	/usr/bin/time -v node spectralnorm.node-2.js 5500
