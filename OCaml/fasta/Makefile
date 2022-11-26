@@ -2,6 +2,10 @@ compile:
 	cp ../../benchmarksgame-sourcecode/fasta/fasta.ocaml-3.ocaml fasta.ml
 	cp ../../benchmarksgame-sourcecode/fasta/fasta.ocaml-6.ocaml fasta.ml
 	ocamlopt -noassert -unsafe -fPIC -nodynlink -inline 100 unix.cmxa fasta.ml -o fasta
+compile2:
+	cp ../../benchmarksgame-sourcecode/fasta/fasta.ocaml-3.ocaml fasta.ml
+	cp ../../benchmarksgame-sourcecode/fasta/fasta.ocaml-6.ocaml fasta.ml
+	ocamlopt -noassert -unsafe -nodynlink -inline 100 unix.cmxa fasta.ml -o fasta
 
 measure:
 	sudo modprobe msr

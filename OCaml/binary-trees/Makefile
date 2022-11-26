@@ -3,6 +3,11 @@ compile:
 	cp ../../benchmarksgame-sourcecode/binarytrees/binarytrees.ocaml-5.ocaml binarytrees.ml
 	ocamlopt -noassert -unsafe -fPIC -nodynlink -inline 100 unix.cmxa binarytrees.ml -o binarytrees
 	rm binarytrees.ml
+compile2:
+	cp ../../benchmarksgame-sourcecode/binarytrees/binarytrees.ocaml-2.ocaml binarytrees.ml
+	cp ../../benchmarksgame-sourcecode/binarytrees/binarytrees.ocaml-5.ocaml binarytrees.ml
+	ocamlopt -noassert -unsafe  -nodynlink -inline 100 unix.cmxa binarytrees.ml -o binarytrees
+	rm binarytrees.ml
 	
 measure:
 	sudo modprobe msr

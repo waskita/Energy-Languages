@@ -3,6 +3,11 @@ compile:
 	cp ../../benchmarksgame-sourcecode/knucleotide/knucleotide.ocaml-2.ocaml knucleotide.ml
 	cp ../../benchmarksgame-sourcecode/knucleotide/knucleotide.ocaml-3.ocaml knucleotide.ml
 	ocamlopt -noassert -unsafe -fPIC -nodynlink -inline 100 unix.cmxa knucleotide.ml -o knucleotide
+compile2:
+#	cp ../../benchmarksgame-sourcecode/knucleotide/knucleotide.ocaml knucleotide.ml
+#	cp ../../benchmarksgame-sourcecode/knucleotide/knucleotide.ocaml-2.ocaml knucleotide.ml
+	cp ../../benchmarksgame-sourcecode/knucleotide/knucleotide.ocaml-3.ocaml knucleotide.ml
+	ocamlopt -noassert -unsafe  -nodynlink -inline 100 unix.cmxa knucleotide.ml -o knucleotide
 
 measure:
 	sudo modprobe msr

@@ -2,6 +2,10 @@ compile:
 	cp ../../benchmarksgame-sourcecode/mandelbrot/mandelbrot.ocaml mandelbrot.ml
 	cp ../../benchmarksgame-sourcecode/mandelbrot/mandelbrot.ocaml-6.ocaml mandelbrot.ml
 	ocamlopt -noassert -unsafe -fPIC -nodynlink -inline 100 unix.cmxa mandelbrot.ml -o mandelbrot
+compile2:
+	cp ../../benchmarksgame-sourcecode/mandelbrot/mandelbrot.ocaml mandelbrot.ml
+	cp ../../benchmarksgame-sourcecode/mandelbrot/mandelbrot.ocaml-6.ocaml mandelbrot.ml
+	ocamlopt -noassert -unsafe -nodynlink -inline 100 unix.cmxa mandelbrot.ml -o mandelbrot
 
 measure:
 	sudo modprobe msr
