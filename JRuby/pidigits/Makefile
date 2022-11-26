@@ -1,5 +1,7 @@
 compile:
-	cp pidigits.jruby pidigits.rb
+	cp ../../benchmarksgame-sourcecode/pidigits/pidigits.jruby  pidigits.rb
+#	cp ../../benchmarksgame-sourcecode/pidigits/pidigits.jruby-5.jruby  pidigits.rb
+#	cp pidigits.jruby pidigits.rb
 
 measure:
 	sudo modprobe msr

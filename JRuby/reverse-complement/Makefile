@@ -1,5 +1,8 @@
 compile:
-	cp revcomp.jruby revcomp.rb
+	cp ../../benchmarksgame-sourcecode/revcomp/revcomp.jruby revcomp.jruby
+#	cp ../../benchmarksgame-sourcecode/revcomp/revcomp.jruby-2.jruby revcomp.jruby
+#	cp ../../benchmarksgame-sourcecode/revcomp/revcomp.jruby-3.jruby revcomp.jruby
+#	cp revcomp.jruby revcomp.rb
 
 measure:
 	sudo modprobe msr
