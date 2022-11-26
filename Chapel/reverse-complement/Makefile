@@ -1,5 +1,7 @@
 compile:
-	/usr/local/src/chapel-1.15.0/bin/linux64/chpl --fast revcomp-3.chpl -o revcomp-3.chapel_run
+	chpl --fast revcomp-3.chpl -o revcomp-3.chapel_run
+compile2:
+	chpl --fast -latomic revcomp-3.chpl -o revcomp-3.chapel_run
 measure:
 	sudo modprobe msr
 	sudo ../../RAPL/main "./revcomp-3.chapel_run --n=0 < ../../revcomp-input25000000.txt" Chapel reverse-complement

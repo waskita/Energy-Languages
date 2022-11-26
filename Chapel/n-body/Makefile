@@ -1,5 +1,7 @@
 compile:
-	/usr/local/src/chapel-1.15.0/bin/linux64/chpl --fast nbody-3.chpl -o nbody-3.chapel_run
+	chpl --fast nbody-3.chpl -o nbody-3.chapel_run
+compile2:
+	chpl --fast -latomic nbody-3.chpl -o nbody-3.chapel_run
 measure:
 	sudo modprobe msr
 	sudo ../../RAPL/main "./nbody-3.chapel_run --n=50000000" Chapel n-body
