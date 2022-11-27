@@ -7,6 +7,15 @@ compile:
 	cp ../../benchmarksgame-sourcecode/knucleotide/knucleotide.rust-8.rust knucleotide.rs
 #	cp ../../benchmarksgame-sourcecode/knucleotide/knucleotide.rust-9.rust knucleotide.rs # cannot compile
 	cargo build --release
+compile2:
+#	/usr/local/src/rust-1.16.0/bin/rustc -C opt-level=3 -C target-cpu=core2 -C lto -L /usr/local/src/rust-libs knucleotide.rs -o knucleotide.rust-4.rust_run
+#	cp ../../benchmarksgame-sourcecode/knucleotide/knucleotide.rust-4.rust knucleotide.rs
+#	cp ../../benchmarksgame-sourcecode/knucleotide/knucleotide.rust-5.rust knucleotide.rs
+#	cp ../../benchmarksgame-sourcecode/knucleotide/knucleotide.rust-6.rust knucleotide.rs
+#	cp ../../benchmarksgame-sourcecode/knucleotide/knucleotide.rust-7.rust knucleotide.rs
+	cp ../../benchmarksgame-sourcecode/knucleotide/knucleotide.rust-8.rust knucleotide.rs
+#	cp ../../benchmarksgame-sourcecode/knucleotide/knucleotide.rust-9.rust knucleotide.rs # cannot compile
+	cargo build --release
 clean:
 	cargo clean
 

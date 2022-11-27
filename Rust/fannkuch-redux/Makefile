@@ -2,6 +2,16 @@ compile:
 #	rustc -C opt-level=3 -C target-cpu=core2 -C lto -L /usr/local/src/rust-libs fannkuchredux.rs -o fannkuchredux.rust-3.rust_run
 	cp ../../benchmarksgame-sourcecode/fannkuchredux/fannkuchredux.rust-6.rust  fannkuch-redux.rs
 	cargo build --release
+
+
+compile2:
+	cp ../../benchmarksgame-sourcecode/fannkuchredux/fannkuchredux.rust-2.rust fannkuch-redux.rs
+	cp ../../benchmarksgame-sourcecode/fannkuchredux/fannkuchredux.rust-3.rust fannkuch-redux.rs
+	cp ../../benchmarksgame-sourcecode/fannkuchredux/fannkuchredux.rust-4.rust fannkuch-redux.rs
+	cp ../../benchmarksgame-sourcecode/fannkuchredux/fannkuchredux.rust-5.rust fannkuch-redux.rs
+#	cp ../../benchmarksgame-sourcecode/fannkuchredux/fannkuchredux.rust-6.rust fannkuch-redux.rs
+	cargo build --release
+
 clean:
 	cargo clean
 
