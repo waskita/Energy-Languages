@@ -1,11 +1,25 @@
-compile:
-	/usr/bin/gcc -pipe -Wall -O3 -fomit-frame-pointer -march=native -mno-fma -fno-finite-math-only -mfpmath=sse -msse2 -fopenmp mandelbrot.gcc-6.c -o mandelbrot.gcc-6.gcc_run
-measure:
-	sudo modprobe msr
-	sudo ../../RAPL/main "./mandelbrot.gcc-6.gcc_run 16000" C mandelbrot
+RUNTIME = mandelbrot.run
+OPTION = 16000
 
+compile: $(RUNTIME)
+
+clean:
+	rm -f *.txt
+	rm -f *.run
+	rm -f *.run *.ali *.adb *.ads *.o
+	
+$(RUNTIME):
+	/usr/bin/gcc -pipe -Wall -O3 -fomit-frame-pointer -march=native -mno-fma -fno-finite-math-only -mfpmath=sse -msse2 -fopenmp mandelbrot.gcc-6.c -o $(RUNTIME)
+
+power: perf.txt
+ 
+perf.txt: $(RUNTIME)
+	perf stat -o perf.txt -a -e cycles,power/energy-cores/,power/energy-pkg/,power/energy-ram/,power/energy-gpu/ ./$(RUNTIME) $(OPTION) > /dev/null
+	
 run:
-	./mandelbrot.gcc-6.gcc_run 16000
+	./$(RUNTIME) $(OPTION) > output.txt
 
-mem:
-	/usr/bin/time -v ./mandelbrot.gcc-6.gcc_run 16000
+mem: memory.txt
+
+memory.txt: $(RUNTIME)
+	/usr/bin/time -f "%M"  -o memory.txt ./$(RUNTIME) $(OPTION) > /dev/null

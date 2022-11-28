@@ -1,11 +1,25 @@
-compile:
-	/usr/bin/gcc -pipe -Wall -O3 -fomit-frame-pointer -march=native -funroll-loops -fopenmp revcomp.gcc-6.c -o revcomp.gcc-6.gcc_run 
-measure:
-	sudo modprobe msr
-	sudo ../../RAPL/main "./revcomp.gcc-6.gcc_run 0 < ../../revcomp-input25000000.txt" C reverse-complement
+RUNTIME = revcomp.run
+OPTION = 0 < ../../revcomp-input25000000.txt
 
+compile: $(RUNTIME)
+
+clean:
+	rm -f *.txt
+	rm -f *.run
+	rm -f *.run *.ali *.adb *.ads *.o
+	
+$(RUNTIME):
+	/usr/bin/gcc -pipe -Wall -O3 -fomit-frame-pointer -march=native -funroll-loops -fopenmp revcomp.gcc-6.c -o  $(RUNTIME)
+
+power: perf.txt
+ 
+perf.txt: $(RUNTIME)
+	perf stat -o perf.txt -a -e cycles,power/energy-cores/,power/energy-pkg/,power/energy-ram/,power/energy-gpu/ ./$(RUNTIME) $(OPTION) > /dev/null
+	
 run:
-	./revcomp.gcc-6.gcc_run 0 < ../../revcomp-input25000000.txt
+	./$(RUNTIME) $(OPTION) > output.txt
 
-mem:
-	/usr/bin/time -v ./revcomp.gcc-6.gcc_run 0 < ../../revcomp-input25000000.txt
+mem: memory.txt
+
+memory.txt: $(RUNTIME)
+	/usr/bin/time -f "%M"  -o memory.txt ./$(RUNTIME) $(OPTION) > /dev/null

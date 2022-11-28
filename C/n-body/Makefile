@@ -1,11 +1,25 @@
-compile:
-	/usr/bin/gcc -pipe -Wall -O3 -fomit-frame-pointer -march=native -mfpmath=sse -msse3 nbody.gcc-4.c -o nbody.gcc-4.gcc_run -lm
-measure:
-	sudo modprobe msr
-	sudo ../../RAPL/main "./nbody.gcc-4.gcc_run 50000000" C n-body
+RUNTIME = nbody.run
+OPTION = 50000000
 
+compile: $(RUNTIME)
+
+clean:
+	rm -f *.txt
+	rm -f *.run
+	rm -f *.run *.ali *.adb *.ads *.o
+	
+$(RUNTIME):
+	/usr/bin/gcc -pipe -Wall -O3 -fomit-frame-pointer -march=native -mfpmath=sse -msse3 nbody.gcc-4.c -lm -o $(RUNTIME)
+
+power: perf.txt
+ 
+perf.txt: $(RUNTIME)
+	perf stat -o perf.txt -a -e cycles,power/energy-cores/,power/energy-pkg/,power/energy-ram/,power/energy-gpu/ ./$(RUNTIME) $(OPTION) > /dev/null
+	
 run:
-	./nbody.gcc-4.gcc_run 50000000
+	./$(RUNTIME) $(OPTION) > output.txt
 
-mem:
-	/usr/bin/time -v ./nbody.gcc-4.gcc_run 50000000
+mem: memory.txt
+
+memory.txt: $(RUNTIME)
+	/usr/bin/time -f "%M"  -o memory.txt ./$(RUNTIME) $(OPTION) > /dev/null

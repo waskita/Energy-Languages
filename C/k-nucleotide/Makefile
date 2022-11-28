@@ -1,11 +1,25 @@
-compile:
-	/usr/bin/gcc -pipe -Wall -O3 -fomit-frame-pointer -march=native -fopenmp -std=c99 -IInclude knucleotide.c -o knucleotide.gcc_run
-measure:
-	sudo modprobe msr
-	sudo ../../RAPL/main "./knucleotide.gcc_run 0 < knucleotide-input25000000.txt" C k-nucleotide
+RUNTIME = knucleotide.run
+OPTION = 0 < ../../knucleotide-input25000000.txt
 
+compile: $(RUNTIME)
+
+clean:
+	rm -f *.txt
+	rm -f *.run
+	
+$(RUNTIME):
+	/usr/bin/gcc -pipe -Wall -O3 -fomit-frame-pointer -march=native -fopenmp -std=c99 -IInclude knucleotide.c -o $(RUNTIME)
+	
+power: perf.txt
+
+perf.txt: $(RUNTIME)
+	perf stat -o perf.txt -a -e cycles,power/energy-cores/,power/energy-pkg/,power/energy-ram/,power/energy-gpu/ ./$(RUNTIME) $(OPTION)
+	
 run:
-	./knucleotide.gcc_run 0 < knucleotide-input25000000.txt
+	./$(RUNTIME) $(OPTION)  > output.txt
 
-mem:
-	/usr/bin/time -v ./knucleotide.gcc_run 0 < knucleotide-input25000000.txt
+mem: memory.txt 
+
+memory.txt: $(RUNTIME)
+	/usr/bin/time -f "%M"  -o memory.txt ./$(RUNTIME) $(OPTION)
+	 
