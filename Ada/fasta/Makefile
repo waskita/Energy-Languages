@@ -1,4 +1,13 @@
-compile:
+RUNTIME = fasta.run
+
+compile: $(RUNTIME)
+
+clean:
+	rm -f *.txt
+	rm -f *.run
+	rm -f *.run *.ali *.adb *.ads *.o
+	
+$(RUNTIME):
 	gnatchop -r -w fasta.gnat-5.gnat
 	gnatmake -O3 -fomit-frame-pointer -march=native -msse3 -mfpmath=sse -gnatNp -f fasta.adb -o fasta.gnat-5.gnat_run 
 	gcc -c -O3 -fomit-frame-pointer -march=native -msse3 -mfpmath=sse -gnatNp fasta.adb
@@ -8,17 +17,17 @@ compile:
 	gcc -c -O3 -fomit-frame-pointer -march=native -msse3 -mfpmath=sse -gnatNp lcg_random.adb
 	gcc -c -O3 -fomit-frame-pointer -march=native -msse3 -mfpmath=sse -gnatNp line_io.adb
 	gnatbind -x fasta.ali
-	gnatlink fasta.ali -O3 -fomit-frame-pointer -march=native -msse3 -mfpmath=sse -o fasta.gnat-5.gnat_run
-
-measure:
-	sudo modprobe msr
-	sudo ../../RAPL/main "./fasta.gnat-5.gnat_run 25000000" Ada fasta
-
+	gnatlink fasta.ali -O3 -fomit-frame-pointer -march=native -msse3 -mfpmath=sse -o  $(RUNTIME)
+	
+power: perf.txt
+ 
+perf.txt: $(RUNTIME)
+	perf stat -o perf.txt -a -e cycles,power/energy-cores/,power/energy-pkg/,power/energy-ram/,power/energy-gpu/ ./$(RUNTIME) 25000000 > /dev/null
+	
 run:
-	./fasta.gnat-5.gnat_run 25000000
+	./$(RUNTIME) 25000000
 
-mem:
-	/usr/bin/time -v ./fasta.gnat-5.gnat_run 25000000
+mem: memory.txt
 
-valgrind:
-	valgrind --tool=massif --stacks=yes ./fasta.gnat-5.gnat_run 25000000
+memory.txt: $(RUNTIME)
+	/usr/bin/time -f "%M"  -o memory.txt ./$(RUNTIME) 25000000 > /dev/null

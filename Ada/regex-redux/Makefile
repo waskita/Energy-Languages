@@ -1,6 +1,16 @@
-compile:
+RUNTIME = regexredux.run
+OPTION = < ../../regexredux-input5000000.txt
+
+compile: $(RUNTIME)
+
+clean:
+	rm -f *.txt
+	rm -f *.run
+	rm -f *.run *.ali *.adb *.ads *.o
+	
+$(RUNTIME):
 	gnatchop -r -w regexredux.gnat-5.gnat
-	gnatmake -O3 -fomit-frame-pointer -march=native -msse3 -mfpmath=sse -gnatNp -f regexredux.adb -o regexredux.gnat-5.gnat_run 
+	gnatmake -O3 -fomit-frame-pointer -march=native -msse3 -mfpmath=sse -gnatNp -f regexredux.adb -o $(RUNTIME)
 	gcc -c -O3 -fomit-frame-pointer -march=native -msse3 -mfpmath=sse -gnatNp regexredux.adb
 	gcc -c -O3 -fomit-frame-pointer -march=native -msse3 -mfpmath=sse -gnatNp block_input.adb
 	gcc -c -O3 -fomit-frame-pointer -march=native -msse3 -mfpmath=sse -gnatNp dna.ads
@@ -9,16 +19,16 @@ compile:
 	gcc -c -O3 -fomit-frame-pointer -march=native -msse3 -mfpmath=sse -gnatNp preprocessing.adb
 	gcc -c -O3 -fomit-frame-pointer -march=native -msse3 -mfpmath=sse -gnatNp u.ads
 	gnatbind -x regexredux.ali
-	gnatlink regexredux.ali -O3 -fomit-frame-pointer -march=native -msse3 -mfpmath=sse -o regexredux.gnat-5.gnat_run
-measure:
-	sudo modprobe msr
-	sudo ../../RAPL/main "./regexredux.gnat-5.gnat_run 0 < ../../regexredux-input5000000.txt" Ada regex-redux
-
-run:
-	./regexredux.gnat-5.gnat_run 0 < ../../regexredux-input5000000.txt
+	gnatlink regexredux.ali -O3 -fomit-frame-pointer -march=native -msse3 -mfpmath=sse -o $(RUNTIME)
+power: perf.txt
+ 
+perf.txt: $(RUNTIME)
+	perf stat -o perf.txt -a -e cycles,power/energy-cores/,power/energy-pkg/,power/energy-ram/,power/energy-gpu/ ./$(RUNTIME) $(OPTION) > /dev/null
 	
-mem:
-	/usr/bin/time -v ./regexredux.gnat-5.gnat_run 0 < ../../regexredux-input5000000.txt
+run:
+	./$(RUNTIME) $(OPTION)
 
-valgrind:
-	valgrind --tool=massif --stacks=yes ./regexredux.gnat-5.gnat_run 0 < ../../regexredux-input5000000.txt
+mem: memory.txt
+
+memory.txt: $(RUNTIME)
+	/usr/bin/time -f "%M"  -o memory.txt ./$(RUNTIME) $(OPTION) > /dev/null

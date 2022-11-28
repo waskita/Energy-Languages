@@ -1,21 +1,31 @@
-compile:
+RUNTIME = nbody.run
+OPTION = 50000000
+
+compile: $(RUNTIME)
+
+clean:
+	rm -f *.txt
+	rm -f *.run
+	rm -f *.run *.ali *.adb *.ads *.o
+	
+$(RUNTIME):
 	gnatchop -r -w nbody.gnat-2.gnat
-	gnatmake -O3 -fomit-frame-pointer -march=native -msse3 -mfpmath=sse -gnatNp -f nbody.adb -o nbody.gnat-2.gnat_run 
+	gnatmake -O3 -fomit-frame-pointer -march=native -msse3 -mfpmath=sse -gnatNp -f nbody.adb -o $(RUNTIME)
 	gcc -c -O3 -fomit-frame-pointer -march=native -msse3 -mfpmath=sse -gnatNp nbody.adb
 	gcc -c -O3 -fomit-frame-pointer -march=native -msse3 -mfpmath=sse -gnatNp nbody_pck.adb
 	gcc -c -O3 -fomit-frame-pointer -march=native -msse3 -mfpmath=sse -gnatNp root.adb
 	gcc -c -O3 -fomit-frame-pointer -march=native -msse3 -mfpmath=sse -gnatNp systems.adb
 	gnatbind -x nbody.ali
-	gnatlink nbody.ali -O3 -fomit-frame-pointer -march=native -msse3 -mfpmath=sse -o nbody.gnat-2.gnat_run
-measure:
-	sudo modprobe msr
-	sudo ../../RAPL/main "./nbody.gnat-2.gnat_run 50000000" Ada n-body
-
-run:
-	./nbody.gnat-2.gnat_run 50000000
+	gnatlink nbody.ali -O3 -fomit-frame-pointer -march=native -msse3 -mfpmath=sse -o $(RUNTIME)
+power: perf.txt
+ 
+perf.txt: $(RUNTIME)
+	perf stat -o perf.txt -a -e cycles,power/energy-cores/,power/energy-pkg/,power/energy-ram/,power/energy-gpu/ ./$(RUNTIME) $(OPTION) > /dev/null
 	
-mem:
-	/usr/bin/time -v ./nbody.gnat-2.gnat_run 50000000
+run:
+	./$(RUNTIME) $(OPTION)
 
-valgrind:
-	valgrind --tool=massif --stacks=yes ./nbody.gnat-2.gnat_run 50000000
+mem: memory.txt
+
+memory.txt: $(RUNTIME)
+	/usr/bin/time -f "%M"  -o memory.txt ./$(RUNTIME) $(OPTION) > /dev/null

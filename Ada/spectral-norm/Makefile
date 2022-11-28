@@ -1,6 +1,16 @@
-compile:
+RUNTIME = spectralnorm.run
+OPTION = 5500
+
+compile: $(RUNTIME)
+
+clean:
+	rm -f *.txt
+	rm -f *.run
+	rm -f *.run *.ali *.adb *.ads *.o
+	
+$(RUNTIME):
 	gnatchop -r -w spectralnorm.gnat-4.gnat
-	gnatmake -O3 -fomit-frame-pointer -march=native -msse3 -mfpmath=sse -gnatNp -f spectralnorm.adb -o spectralnorm.gnat-4.gnat_run 
+	gnatmake -O3 -fomit-frame-pointer -march=native -msse3 -mfpmath=sse -gnatNp -f spectralnorm.adb -o $(RUNTIME)
 	gcc -c -O3 -fomit-frame-pointer -march=native -msse3 -mfpmath=sse -gnatNp spectralnorm.adb
 	gcc -c -O3 -fomit-frame-pointer -march=native -msse3 -mfpmath=sse -gnatNp division.ads
 	gcc -c -O3 -fomit-frame-pointer -march=native -msse3 -mfpmath=sse -gnatNp division-d.adb
@@ -10,17 +20,17 @@ compile:
 	gcc -c -O3 -fomit-frame-pointer -march=native -msse3 -mfpmath=sse -gnatNp spectral_utils-dist.adb
 	gcc -c -O3 -fomit-frame-pointer -march=native -msse3 -mfpmath=sse -gnatNp spectral_utils-s.adb
 	gnatbind -x spectralnorm.ali
-	gnatlink spectralnorm.ali -O3 -fomit-frame-pointer -march=native -msse3 -mfpmath=sse -o spectralnorm.gnat-4.gnat_run
+	gnatlink spectralnorm.ali -O3 -fomit-frame-pointer -march=native -msse3 -mfpmath=sse -o $(RUNTIME)
 
-measure:
-	sudo modprobe msr
-	sudo ../../RAPL/main "./spectralnorm.gnat-4.gnat_run 5500" Ada spectral-norm
-
+power: perf.txt
+ 
+perf.txt: $(RUNTIME)
+	perf stat -o perf.txt -a -e cycles,power/energy-cores/,power/energy-pkg/,power/energy-ram/,power/energy-gpu/ ./$(RUNTIME) $(OPTION) > /dev/null
+	
 run:
-	./spectralnorm.gnat-4.gnat_run 5500
+	./$(RUNTIME) $(OPTION)
 
-mem:
-	/usr/bin/time -v ./spectralnorm.gnat-4.gnat_run 5500
+mem: memory.txt
 
-valgrind:
-	valgrind --tool=massif --stacks=yes ./spectralnorm.gnat-4.gnat_run 5500	
+memory.txt: $(RUNTIME)
+	/usr/bin/time -f "%M"  -o memory.txt ./$(RUNTIME) $(OPTION) > /dev/null
