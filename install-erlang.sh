@@ -4,4 +4,4 @@ curl -fsSL https://packages.erlang-solutions.com/ubuntu/erlang_solutions.asc | s
 
 echo "deb https://packages.erlang-solutions.com/ubuntu $(lsb_release -cs) contrib" | sudo tee /etc/apt/sources.list.d/erlang.list
 
-apt install erlang
+apt install -y erlang

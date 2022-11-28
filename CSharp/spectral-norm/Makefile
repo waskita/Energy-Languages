@@ -1,6 +1,6 @@
 RUNTIME = bin/Release/net6.0/tmp
 RPI_RUNTIME = binarytrees.rpi_run
-OPTION =   5500
+OPTION =  5500
 
 compile: $(RUNTIME)
 

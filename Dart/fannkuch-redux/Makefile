@@ -1,14 +1,41 @@
-compile:
+RUNTIME = fannkuchredux.dart-3.dart
+RPI_RUNTIME = binarytrees.rpi_run
+OPTION =  12
 
-measure:
-	sudo modprobe msr
-	sudo ../../RAPL/main "dart  fannkuchredux.dart-3.dart 12" Dart fannkuch-redux
+compile: $(RUNTIME)
 
+rpi_compile: $(RPI_RUNTIME)
+
+clean:
+	rm -f *.txt
+	rm -f *.run
+	rm -rf bin obj
+	
+$(RUNTIME): 
+		
+$(RPI_RUNTIME):	
+	
+power: perf.txt
+
+perf.txt: $(RUNTIME)
+	perf stat -o perf.txt -a -e cycles,power/energy-cores/,power/energy-pkg/,power/energy-ram/,power/energy-gpu/ dart ./$(RUNTIME) $(OPTION) > /dev/null
+	
 run:
-	dart  fannkuchredux.dart-3.dart 12
+	dart ./$(RUNTIME) $(OPTION)  > output.txt
 
-mem:
-	/usr/bin/time -v dart  fannkuchredux.dart-3.dart 12
+mem: memory.txt 
 
-valgrind:
-	valgrind --tool=massif --stacks=yes dart  fannkuchredux.dart-3.dart 12
+rpi_mem: memory_rpi.txt 
+
+memory.txt: $(RUNTIME)
+	/usr/bin/time -f "%M"  -o memory.txt  dart ./$(RUNTIME) $(OPTION) > /dev/null	
+
+rpi_perf.txt: $(RUNTIME)
+	perf stat -o rpi_perf.txt -a -e cycles,power/energy-cores/,power/energy-pkg/,power/energy-ram/,power/energy-gpu/ dart ./$(RPI_RUNTIME) $(OPTION) > /dev/null	
+
+rpi_memory.txt: $(RPI_RUNTIME)
+	/usr/bin/time -f "%M"  -o rpi_memory.txt dart ./$(RPI_RUNTIME) $(OPTION) > /dev/null		
+	
+rpi_run:
+	dart ./$(RUNTIME) $(OPTION)  > rpi_output.txt
+		

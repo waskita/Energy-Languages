@@ -1,14 +1,46 @@
-compile:
+RUNTIME = binarytrees.dart 
+RPI_RUNTIME = binarytrees.rpi_run
+OPTION =  21
 
-measure:
-	sudo modprobe msr
-	sudo ../../RAPL/main "/usr/bin/dart  binarytrees.dart 21" Dart binary-trees
+compile: $(RUNTIME)
+#	cp ../../benchmarksgame-sourcecode/binarytrees/binarytrees.dart-3.dart binarytrees.dart
+#	cp ../../benchmarksgame-sourcecode/binarytrees/binarytrees.dart-4.dart binarytrees.dart
+#	cp ../../benchmarksgame-sourcecode/binarytrees/binarytrees.dart-5.dart binarytrees.dart
+#	cp ../../benchmarksgame-sourcecode/binarytrees/binarytrees.dart-6.dart binarytrees.dart
+	cp ../../benchmarksgame-sourcecode/binarytrees/binarytrees.dart-7.dart binarytrees.dart
 
+rpi_compile: $(RPI_RUNTIME)
+
+clean:
+	rm -f *.txt
+	rm -f *.run
+	rm -rf bin obj
+	
+$(RUNTIME): 
+		
+$(RPI_RUNTIME):	
+	
+power: perf.txt
+
+perf.txt: $(RUNTIME)
+	perf stat -o perf.txt -a -e cycles,power/energy-cores/,power/energy-pkg/,power/energy-ram/,power/energy-gpu/ dart ./$(RUNTIME) $(OPTION) > /dev/null
+	
 run:
-	dart  binarytrees-6.dart 21
+	dart ./$(RUNTIME) $(OPTION)  > output.txt
 
-mem:
-	/usr/bin/time -v  /usr/bin/dart  binarytrees.dart 21
+mem: memory.txt 
 
-valgrind:
-	valgrind --tool=massif --stacks=yes  /usr/bin/dart  binarytrees.dart 21
+rpi_mem: memory_rpi.txt 
+
+memory.txt: $(RUNTIME)
+	/usr/bin/time -f "%M"  -o memory.txt  dart ./$(RUNTIME) $(OPTION) > /dev/null	
+
+rpi_perf.txt: $(RUNTIME)
+	perf stat -o rpi_perf.txt -a -e cycles,power/energy-cores/,power/energy-pkg/,power/energy-ram/,power/energy-gpu/ dart ./$(RPI_RUNTIME) $(OPTION) > /dev/null	
+
+rpi_memory.txt: $(RPI_RUNTIME)
+	/usr/bin/time -f "%M"  -o rpi_memory.txt dart ./$(RPI_RUNTIME) $(OPTION) > /dev/null		
+	
+rpi_run:
+	dart ./$(RUNTIME) $(OPTION)  > rpi_output.txt
+		
