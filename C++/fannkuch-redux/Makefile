@@ -1,14 +1,25 @@
-compile:
-	/usr/bin/g++ -c -pipe -O3 -fomit-frame-pointer -march=native  -std=c++11 -fopenmp fannkuchredux.gpp-5.c++ -o fannkuchredux.gpp-5.c++.o &&  /usr/bin/g++ fannkuchredux.gpp-5.c++.o -o fannkuchredux.gpp-5.gpp_run -fopenmp 
-measure:
-	sudo modprobe msr
-	sudo ../../RAPL/main "./fannkuchredux.gpp-5.gpp_run 12" C++ fannkuch-redux
+RUNTIME = fannkuchredux.run
+OPTION = 12
 
+compile: $(RUNTIME)
+
+clean:
+	rm -f *.txt
+	rm -f *.run
+	
+$(RUNTIME):
+	/usr/bin/g++ -c -pipe -O3 -fomit-frame-pointer -march=native  -std=c++11 -fopenmp fannkuchredux.gpp-5.c++ -o fannkuchredux.gpp-5.c++.o &&  /usr/bin/g++ fannkuchredux.gpp-5.c++.o -o $(RUNTIME) -fopenmp 
+
+power: perf.txt
+
+perf.txt: $(RUNTIME)
+	perf stat -o perf.txt -a -e cycles,power/energy-cores/,power/energy-pkg/,power/energy-ram/,power/energy-gpu/ ./$(RUNTIME) $(OPTION) > /dev/null
+	
 run:
-	./fannkuchredux.gpp-5.gpp_run 12
+	./$(RUNTIME) $(OPTION)  > output.txt
 
-mem:
-	 /usr/bin/time -v  ./fannkuchredux.gpp-5.gpp_run 12
-valgrind:
-	valgrind --tool=massif --stacks=yes  ./fannkuchredux.gpp-5.gpp_run 12
+mem: memory.txt 
 
+memory.txt: $(RUNTIME)
+	/usr/bin/time -f "%M"  -o memory.txt ./$(RUNTIME) $(OPTION) > /dev/null
+	 

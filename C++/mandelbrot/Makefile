@@ -1,14 +1,26 @@
-compile:
-	/usr/bin/g++ -c -pipe -O3 -fomit-frame-pointer -march=native -mfpmath=sse -msse2 -mfpmath=sse -msse2 -fopenmp -mno-fma --std=c++14 mandelbrot.gpp-6.c++ -o mandelbrot.gpp-6.c++.o &&  /usr/bin/g++ mandelbrot.gpp-6.c++.o -o mandelbrot.gpp-6.gpp_run -fopenmp 
-measure:
-	sudo modprobe msr
-	sudo ../../RAPL/main "./mandelbrot.gpp-6.gpp_run 16000" C++ mandelbrot
+RUNTIME = knucleotide.run
+OPTION = 16000
 
+compile: $(RUNTIME)
+
+clean:
+	rm -f *.txt
+	rm -f *.run
+	
+$(RUNTIME):
+	/usr/bin/g++ -c -pipe -O3 -fomit-frame-pointer -march=native -mfpmath=sse -msse2 -mfpmath=sse -msse2 -fopenmp -mno-fma --std=c++14 mandelbrot.gpp-6.c++ -o mandelbrot.gpp-6.c++.o &&  /usr/bin/g++ mandelbrot.gpp-6.c++.o -fopenmp  -o $(RUNTIME) 
+	
+power: perf.txt
+
+perf.txt: $(RUNTIME)
+	perf stat -o perf.txt -a -e cycles,power/energy-cores/,power/energy-pkg/,power/energy-ram/,power/energy-gpu/ ./$(RUNTIME) $(OPTION) > /dev/null
+	
 run:
-	./mandelbrot.gpp-6.gpp_run 16000
+	./$(RUNTIME) $(OPTION)  > output.txt
 
-mem:
-	/usr/bin/time -v ./mandelbrot.gpp-6.gpp_run 16000
+mem: memory.txt 
 
-valgrind:
-	valgrind --tool=massif --stacks=yes ./mandelbrot.gpp-6.gpp_run 16000
+memory.txt: $(RUNTIME)
+	/usr/bin/time -f "%M"  -o memory.txt ./$(RUNTIME) $(OPTION) > /dev/null
+	 
+

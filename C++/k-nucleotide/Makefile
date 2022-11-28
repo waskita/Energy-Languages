@@ -1,16 +1,26 @@
-compile:
-	/usr/bin/g++ -c -pipe -O3 -fomit-frame-pointer -march=native  -std=c++14 knucleotide.gpp-3.c++ -o knucleotide.gpp-3.c++.o &&  /usr/bin/g++ knucleotide.gpp-3.c++.o -o knucleotide.gpp-3.gpp_run -Wl,--no-as-needed -lpthread 
-compile2:
-	/usr/bin/g++ -c -pipe -O3 -fomit-frame-pointer -march=native  -std=c++14 knucleotide.gpp-3.c++ -o knucleotide.gpp-3.c++.o &&  /usr/bin/g++ knucleotide.gpp-3.c++.o -o knucleotide.gpp-3.gpp_run -Wl,--no-as-needed -lpthread 
-measure:
-	sudo modprobe msr
-	sudo ../../RAPL/main "./knucleotide.gpp-3.gpp_run 0 < ../../knucleotide-input25000000.txt" C++ k-nucleotide
+RUNTIME = knucleotide.run
+OPTION = 0 < ../../knucleotide-input25000000.txt
 
+compile: $(RUNTIME)
+
+clean:
+	rm -f *.txt
+	rm -f *.run
+	
+$(RUNTIME):
+	/usr/bin/g++ -c -pipe -O3 -fomit-frame-pointer -march=native  -std=c++14 knucleotide.gpp-3.c++ -o knucleotide.gpp-3.c++.o &&  /usr/bin/g++ knucleotide.gpp-3.c++.o -o $(RUNTIME) -Wl,--no-as-needed -lpthread
+	
+power: perf.txt
+
+perf.txt: $(RUNTIME)
+	perf stat -o perf.txt -a -e cycles,power/energy-cores/,power/energy-pkg/,power/energy-ram/,power/energy-gpu/ ./$(RUNTIME) $(OPTION) > /dev/null
+	
 run:
-	./knucleotide.gpp-3.gpp_run 0 < ../../knucleotide-input25000000.txt
+	./$(RUNTIME) $(OPTION)  > output.txt
 
-mem:
-	/usr/bin/time -v ./knucleotide.gpp-3.gpp_run 0 < ../../knucleotide-input25000000.txt
+mem: memory.txt 
 
-valgrind:
-	valgrind --tool=massif --stacks=yes ./knucleotide.gpp-3.gpp_run 0 < ../../knucleotide-input25000000.txt
+memory.txt: $(RUNTIME)
+	/usr/bin/time -f "%M"  -o memory.txt ./$(RUNTIME) $(OPTION) > /dev/null
+	 
+

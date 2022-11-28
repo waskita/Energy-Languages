@@ -1,17 +1,26 @@
-compile:
-	/usr/bin/g++ -c -pipe -O3 -fomit-frame-pointer -march=native -mfpmath=sse -msse3 -std=c++11 fasta.gpp-5.c++ -o fasta.gpp-5.c++.o &&  /usr/bin/g++ fasta.gpp-5.c++.o -o fasta.gpp-5.gpp_run -lpthread 
-#	/usr/bin/g++ -c -pipe -O3 -fomit-frame-pointer -march=native -mfpmath=sse -msse3 -std=c++11 fasta.gpp-8.c++ -o fasta.gpp-8.c++.o &&  /usr/bin/g++ fasta.gpp-8.c++.o -o fasta.gpp-8.gpp_run -lpthread 
-#	/usr/bin/g++ -c -pipe -O3 -fomit-frame-pointer -march=ivybridge  -std=c++17 fasta.gpp-8.c++ -o fasta.gpp-8.c++.o && /usr/bin/g++ fasta.gpp-8.c++.o -o fasta.gpp-8.gpp_run -lpthread
-measure:
-	sudo modprobe msr
-	sudo ../../RAPL/main "./fasta.gpp-5.gpp_run 25000000" C++ fasta
+RUNTIME = fannkuchredux.run
+OPTION = 25000000
 
+compile: $(RUNTIME)
+
+clean:
+	rm -f *.txt
+	rm -f *.run
+	
+$(RUNTIME):
+	/usr/bin/g++ -c -pipe -O3 -fomit-frame-pointer -march=native -mfpmath=sse -msse3 -std=c++11 fasta.gpp-5.c++ -o fasta.gpp-5.c++.o &&  /usr/bin/g++ fasta.gpp-5.c++.o -o $(RUNTIME) -lpthread 
+
+
+power: perf.txt
+
+perf.txt: $(RUNTIME)
+	perf stat -o perf.txt -a -e cycles,power/energy-cores/,power/energy-pkg/,power/energy-ram/,power/energy-gpu/ ./$(RUNTIME) $(OPTION) > /dev/null
+	
 run:
-	./fasta.gpp-5.gpp_run 25000000
+	./$(RUNTIME) $(OPTION)  > output.txt
 
-mem:
-	/usr/bin/time -v ./fasta.gpp-5.gpp_run 25000000
+mem: memory.txt 
 
-valgrind:
-	valgrind --tool=massif --stacks=yes ./fasta.gpp-5.gpp_run 25000000
-
+memory.txt: $(RUNTIME)
+	/usr/bin/time -f "%M"  -o memory.txt ./$(RUNTIME) $(OPTION) > /dev/null
+	 
