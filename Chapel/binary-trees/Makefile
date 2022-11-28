@@ -1,14 +1,42 @@
-compile:
-	/usr/local/src/chapel-1.15.0/bin/linux64/chpl --fast binarytrees-3.chpl -o binarytrees-3.chapel_run
-measure:
-	sudo modprobe msr
-	sudo ../../RAPL/main "./binarytrees-3.chapel_run --n=21" Chapel binary-trees
+RUNTIME = binarytrees.run
+RPI_RUNTIME = binarytrees.rpi_run
+OPTION = --n=21
 
+compile: $(RUNTIME)
+
+rpi_compile: $(RPI_RUNTIME)
+
+clean:
+	rm -f *.txt
+	rm -f *.run
+	
+$(RUNTIME):
+	chpl --fast binarytrees-3.chpl -o $(RUNTIME)	
+	
+$(RPI_RUNTIME):	
+	chpl --fast -latomic binarytrees-3.chpl -o $(RUNTIME)		
+		
+power: perf.txt
+
+perf.txt: $(RUNTIME)
+	perf stat -o perf.txt -a -e cycles,power/energy-cores/,power/energy-pkg/,power/energy-ram/,power/energy-gpu/ ./$(RUNTIME) $(OPTION) > /dev/null
+	
 run:
-	./binarytrees-3.chapel_run --n=21
+	./$(RUNTIME) $(OPTION)  > output.txt
 
-mem:
-	/usr/bin/time -v ./binarytrees-3.chapel_run --n=21
+mem: memory.txt 
 
-valgrind:
-	valgrind --tool=massif --stacks=yes ./binarytrees-3.chapel_run --n=21
+rpi_mem: memory_rpi.txt 
+
+memory.txt: $(RUNTIME)
+	/usr/bin/time -f "%M"  -o memory.txt ./$(RUNTIME) $(OPTION) > /dev/null	
+
+rpi_perf.txt: $(RUNTIME)
+	perf stat -o rpi_perf.txt -a -e cycles,power/energy-cores/,power/energy-pkg/,power/energy-ram/,power/energy-gpu/ ./$(RPI_RUNTIME) $(OPTION) > /dev/null	
+
+rpi_memory.txt: $(RPI_RUNTIME)
+	/usr/bin/time -f "%M"  -o rpi_memory.txt ./$(RPI_RUNTIME) $(OPTION) > /dev/null		
+	
+rpi_run:
+	./$(RUNTIME) $(OPTION)  > rpi_output.txt
+	

@@ -1,16 +1,42 @@
-compile:
-	chpl --fast nbody-3.chpl -o nbody-3.chapel_run
-compile2:
-	chpl --fast -latomic nbody-3.chpl -o nbody-3.chapel_run
-measure:
-	sudo modprobe msr
-	sudo ../../RAPL/main "./nbody-3.chapel_run --n=50000000" Chapel n-body
+RUNTIME = nbody.run
+RPI_RUNTIME = nbody.rpi_run
+OPTION = --n=50000000
 
+compile: $(RUNTIME)
+
+rpi_compile: $(RPI_RUNTIME)
+
+clean:
+	rm -f *.txt
+	rm -f *.run
+	
+$(RUNTIME):
+	chpl --fast nbody-3.chpl -o $(RUNTIME)
+	
+$(RPI_RUNTIME):	
+	chpl --fast -latomic nbody-3.chpl -o $(RPI_RUNTIME)
+		
+power: perf.txt
+
+perf.txt: $(RUNTIME)
+	perf stat -o perf.txt -a -e cycles,power/energy-cores/,power/energy-pkg/,power/energy-ram/,power/energy-gpu/ ./$(RUNTIME) $(OPTION) > /dev/null
+	
 run:
-	./nbody-3.chapel_run --n=50000000
+	./$(RUNTIME) $(OPTION)  > output.txt
 
-mem:
-	/usr/bin/time -v ./nbody-3.chapel_run --n=50000000
+mem: memory.txt 
 
-valgrind:
-	valgrind --tool=massif --stacks=yes ./nbody-3.chapel_run --n=50000000
+rpi_mem: memory_rpi.txt 
+
+memory.txt: $(RUNTIME)
+	/usr/bin/time -f "%M"  -o memory.txt ./$(RUNTIME) $(OPTION) > /dev/null	
+
+rpi_perf.txt: $(RUNTIME)
+	perf stat -o rpi_perf.txt -a -e cycles,power/energy-cores/,power/energy-pkg/,power/energy-ram/,power/energy-gpu/ ./$(RPI_RUNTIME) $(OPTION) > /dev/null	
+
+rpi_memory.txt: $(RPI_RUNTIME)
+	/usr/bin/time -f "%M"  -o rpi_memory.txt ./$(RPI_RUNTIME) $(OPTION) > /dev/null		
+	
+rpi_run:
+	./$(RUNTIME) $(OPTION)  > rpi_output.txt
+	
