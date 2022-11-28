@@ -14,7 +14,7 @@ power: perf.txt
 perf.txt: $(RUNTIME)
 #	sudo modprobe msr
 #	sudo ../../RAPL/main "./binarytrees 21" C binary-trees
-	perf stat -o perf.txt -a -e cycles,power/energy-cores/,power/energy-pkg/,power/energy-ram/,power/energy-gpu/ ./$(RUNTIME) 21
+	perf stat -o perf.txt -a -e cycles,power/energy-cores/,power/energy-pkg/,power/energy-ram/,power/energy-gpu/ ./$(RUNTIME) 21 > /dev/null
 	
 run:
 	./$(RUNTIME) 21 > output.txt
@@ -22,4 +22,4 @@ run:
 mem: memory.txt
 
 memory.txt: $(RUNTIME)
-	/usr/bin/time -f "%M"  -o memory.txt ./$(RUNTIME) 21
+	/usr/bin/time -f "%M"  -o memory.txt ./$(RUNTIME) 21 > /dev/null
